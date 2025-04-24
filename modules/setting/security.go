@@ -52,6 +52,7 @@ func loadSecret(sec ConfigSection, uriKey, verbatimKey string) string {
 
 	// if we have no URI, use verbatim
 	if uri == "" {
+		log.Info("loadSecret (verbatim) %s", verbatimKey)
 		return verbatim
 	}
 
@@ -61,6 +62,7 @@ func loadSecret(sec ConfigSection, uriKey, verbatimKey string) string {
 	}
 	switch tempURI.Scheme {
 	case "file":
+		log.Info("loadSecret (uri) %s", uriKey)
 		buf, err := os.ReadFile(tempURI.RequestURI())
 		if err != nil {
 			log.Fatal("Failed to read %s (%s): %v", uriKey, tempURI.RequestURI(), err)

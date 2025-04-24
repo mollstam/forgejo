@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"forgejo.org/modules/generate"
+	"forgejo.org/modules/log"
 )
 
 // LFS represents the server-side configuration for Git LFS.
@@ -77,9 +78,12 @@ func loadLFSFrom(rootCfg ConfigProvider) error {
 		return nil
 	}
 
+	log.Info("Loading LFS JWT secret..")
 	jwtSecretBase64 := loadSecret(rootCfg.Section("server"), "LFS_JWT_SECRET_URI", "LFS_JWT_SECRET")
+	log.Info("Loaded LFS JWT secret: %v", jwtSecretBase64)
 	LFS.JWTSecretBytes, err = generate.DecodeJwtSecret(jwtSecretBase64)
 	if err != nil {
+		log.Warn("Failed to decode LFS JWT secret: %v", err)
 		LFS.JWTSecretBytes, jwtSecretBase64, err = generate.NewJwtSecret()
 		if err != nil {
 			return fmt.Errorf("error generating JWT Secret for custom config: %v", err)
