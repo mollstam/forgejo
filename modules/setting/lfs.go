@@ -5,6 +5,7 @@ package setting
 
 import (
 	"fmt"
+	"strings"
 	"time"
 
 	"forgejo.org/modules/generate"
@@ -81,6 +82,11 @@ func loadLFSFrom(rootCfg ConfigProvider) error {
 	log.Info("Loading LFS JWT secret..")
 	jwtSecretBase64 := loadSecret(rootCfg.Section("server"), "LFS_JWT_SECRET_URI", "LFS_JWT_SECRET")
 	log.Info("Loaded LFS JWT secret: %v", jwtSecretBase64)
+	for i, r := range jwtSecretBase64 {
+		log.Info("Byte %d: %q (%#x)\n", i, r, r)
+	}
+	cleaned := strings.TrimSpace(jwtSecretBase64)
+	log.Info("Cleaned LFS JWT secret: %v\t|%x|", cleaned, cleaned)
 	LFS.JWTSecretBytes, err = generate.DecodeJwtSecret(jwtSecretBase64)
 	if err != nil {
 		log.Warn("Failed to decode LFS JWT secret: %v", err)
